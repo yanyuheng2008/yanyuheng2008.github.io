@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元搜索引擎 - Meta Search Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-search"></i> 元搜索引擎</h1>
+            <p class="subtitle">同时搜索多个搜索引擎，获得更全面的结果</p>
+        </header>
+
+        <main class="main-content">
+            {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form class="search-form" action="/search" method="GET">
+                <div class="search-box">
+                    <input type="text" 
+                           name="q" 
+                           placeholder="输入搜索关键词..." 
+                           value="{{ request.args.get('q', '') }}" 
+                           required 
+                           autocomplete="off">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+
+                <div class="engine-selection">
+                    <h3>选择搜索引擎：</h3>
+                    <div class="engines">
+                        <label class="engine-option">
+                            <input type="checkbox" name="engines" value="google" checked>
+                            <span class="checkmark"></span>
+                            <i class="fab fa-google"></i>
+                            Google
+                        </label>
+                        <label class="engine-option">
+                            <input type="checkbox" name="engines" value="bing" checked>
+                            <span class="checkmark"></span>
+                            <i class="fab fa-microsoft"></i>
+                            Bing
+                        </label>
+                        <label class="engine-option">
+                            <input type="checkbox" name="engines" value="duckduckgo" checked>
+                            <span class="checkmark"></span>
+                            <i class="fas fa-user-secret"></i>
+                            DuckDuckGo
+                        </label>
+                        <label class="engine-option">
+                            <input type="checkbox" name="engines" value="yahoo" checked>
+                            <span class="checkmark"></span>
+                            <i class="fab fa-yahoo"></i>
+                            Yahoo
+                        </label>
+                    </div>
+                </div>
+
+                <div class="search-actions">
+                    <button type="submit" class="search-btn primary">
+                        <i class="fas fa-search"></i>
+                        开始搜索
+                    </button>
+                    <button type="button" class="search-btn secondary" onclick="selectAll()">
+                        <i class="fas fa-check-double"></i>
+                        全选
+                    </button>
+                    <button type="button" class="search-btn secondary" onclick="deselectAll()">
+                        <i class="fas fa-times"></i>
+                        全不选
+                    </button>
+                </div>
+            </form>
+
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-rocket"></i>
+                    <h3>快速搜索</h3>
+                    <p>并发搜索多个引擎，提供更快的搜索体验</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-filter"></i>
+                    <h3>智能去重</h3>
+                    <p>自动去除重复结果，只显示最相关的内容</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-globe"></i>
+                    <h3>全面覆盖</h3>
+                    <p>整合多个主流搜索引擎的搜索结果</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 元搜索引擎. 提供更智能的搜索体验.</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
