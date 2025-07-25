@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <title>小马橘园 - 2702其貌...</title> <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom, #87CEEB, #ffffff); /* 天空到地面的渐变 */
+            overflow: hidden;
+            color: #333;
+        }
+
+        .game-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #FF7F50; /* 珊瑚色，像橘子 */
+            margin-bottom: 5px; /* 调整标题下边距 */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .author-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .stats-panel {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            padding: 10px;
+            background-color: #FFFACD; /* 柠檬绸色 */
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        .stats-panel p {
+            margin: 0;
+            font-weight: bold;
+            color: #4CAF50; /* 绿色 */
+            display: flex;
+            align-items: center;
+        }
+
+        .stats-panel span {
+            color: #FF7F50;
+            margin-left: 5px;
+            font-size: 1.1em;
+        }
+
+        .garden {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #8B4513; /* 泥土色 */
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.2);
+        }
+
+        .tree {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px; /* 基础宽度 */
+            height: 250px; /* 基础高度 */
+            transition: all 0.5s ease-out; /* 平滑过渡动画 */
+        }
+
+        /* 树干 */
+        .tree .trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 80px;
+            background-color: #8B4513;
+            border-radius: 5px 5px 0 0;
+            transition: height 0.5s ease-out;
+        }
+
+        /* 树叶 */
+        .tree .leaves {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 150px;
+            background-color: #4CAF50; /* 绿色 */
+            border-radius: 50%;
+            transition: all 0.5s ease-out;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* 果实层（最初隐藏） */
+        .tree .fruit-layer {
+            position: absolute;
+            top: 50%; /* 相对于树叶中心 */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        /* 橘子树生长阶段样式 */
+        .tree.stage-0 { /* 种子/幼苗 */
+            width: 50px;
+            height: 80px;
+        }
+        .tree.stage-0 .trunk { height: 30px; width: 10px; }
+        .tree.stage-0 .leaves { width: 30px; height: 30px; background-color: #A5D6A7; } /* 嫩绿色 */
+
+        .tree.stage-1 { /* 小树 */
+            width: 100px;
+            height: 150px;
+        }
+        .tree.stage-1 .trunk { height: 60px; width: 20px; }
+        .tree.stage-1 .leaves { width: 80px; height: 80px; background-color: #81C784; }
+
+        .tree.stage-2 { /* 中等树 */
+            width: 150px;
+            height: 220px;
+        }
+        .tree.stage-2 .trunk { height: 90px; width: 25px; }
+        .tree.stage-2 .leaves { width: 120px; height: 120px; background-color: #66BB6A; }
+
+        .tree.stage-3 { /* 大树 */
+            width: 200px;
+            height: 280px;
+        }
+        .tree.stage-3 .trunk { height: 120px; width: 30px; }
+        .tree.stage-3 .leaves { width: 180px; height: 180px; background-color: #4CAF50; }
+
+        .tree.stage-4 { /* 结果树 */
+            width: 220px;
+            height: 300px;
+        }
+        .tree.stage-4 .trunk { height: 130px; width: 35px; }
+        .tree.stage-4 .leaves { width: 200px; height: 200px; background-color: #4CAF50; }
+        .tree.stage-4 .fruit-layer {
+            opacity: 1;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23FFA500"/><circle cx="30" cy="30" r="10" fill="%23FFD700"/><circle cx="70" cy="40" r="12" fill="%23FFD700"/><circle cx="45" cy="70" r="11" fill="%23FFD700"/></svg>'); /* 简化的SVG橘子图标 */
+        }
+
+        /* 状态图标 */
+        .status-icon {
+            position: absolute;
+            font-size: 2.5em;
+            cursor: pointer;
+            animation: bounce 1s infinite alternate; /* 弹跳动画 */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            z-index: 10;
+            display: none; /* 默认隐藏 */
+        }
+
+        .status-icon.water-needed {
+            top: -10px;
+            left: 20%;
+            color: #00BFFF; /* 深天蓝色 */
+        }
+
+        .status-icon.fertilizer-needed {
+            top: -10px;
+            right: 20%;
+            color: #8B4513; /* 土壤色 */
+        }
+
+        .tree.dry .status-icon.water-needed,
+        .tree.no-fertilizer .status-icon.fertilizer-needed,
+        .tree.ready-to-harvest .status-icon.harvest-ready { /* 假设有一个收获图标 */
+            display: block; /* 需要时显示 */
+        }
+
+        /* 橘子树健康状态 */
+        .tree.dry .leaves {
+            background-color: #B2DFDB; /* 浅灰色绿 */
+            filter: brightness(0.8);
+        }
+
+        .tree.no-fertilizer .leaves {
+            background-color: #FFEBEE; /* 浅粉色，模拟营养不良 */
+            filter: grayscale(0.2);
+        }
+
+        /* 动画效果 */
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        @keyframes grow {
+            from { transform: scale(0.5); }
+            to { transform: scale(1); }
+        }
+
+        @keyframes fruitPop {
+            from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        /* 控制按钮 */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* 允许换行 */
+            gap: 15px;
+        }
+
+        .tool-btn {
+            background-color: #4CAF50; /* 绿色 */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tool-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .tool-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tool-btn#harvest-btn {
+            background-color: #FF9800; /* 橘色 */
+        }
+
+        .tool-btn#harvest-btn:hover {
+            background-color: #FB8C00;
+        }
+
+        .tool-btn#cut-orange-btn {
+            background-color: #E91E63; /* 粉色 */
+        }
+        .tool-btn#cut-orange-btn:hover {
+            background-color: #D81B60;
+        }
+
+        .tool-btn#mushroom-collection-btn {
+            background-color: #673AB7; /* 紫色 */
+        }
+        .tool-btn#mushroom-collection-btn:hover {
+            background-color: #5E35B1;
+        }
+        .tool-btn#game-info-btn { /* 新增游戏说明按钮样式 */
+            background-color: #2196F3; /* 蓝色 */
+        }
+        .tool-btn#game-info-btn:hover {
+            background-color: #1976D2;
+        }
+
+
+        .message-area {
+            margin-top: 20px;
+            color: #D32F2F; /* 红色警告 */
+            font-weight: bold;
+            min-height: 25px;
+            animation: fadeOut 3s forwards; /* 消息淡出 */
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* 互动特效 - 粒子效果（JS控制） */
+        .effect-particle {
+            position: absolute;
+            background-color: rgba(0, 191, 255, 0.7); /* 水滴色 */
+            border-radius: 50%;
+            animation: drip 1s forwards ease-out;
+            pointer-events: none; /* 不阻止鼠标事件 */
+            z-index: 100;
+        }
+
+        .effect-particle.fertilizer {
+            background-color: rgba(139, 69, 19, 0.7); /* 肥料色 */
+            animation: scatter 1s forwards ease-out;
+        }
+
+        @keyframes drip {
+            from { transform: translateY(0) scale(1); opacity: 1; }
+            to { transform: translateY(50px) scale(0.5); opacity: 0; }
+        }
+
+        @keyframes scatter {
+            from { transform: translateY(0) scale(1); opacity: 1; }
+            to { transform: translateY(30px) translateX(calc(var(--rand-x) * 1px)) scale(0.2); opacity: 0; }
+        }
+
+        /* 蘑菇样式 */
+        .mushroom {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            animation: bounce 1.5s infinite alternate; /* 蘑菇也弹跳 */
+            z-index: 5;
+            bottom: 10px; /* 确保在地面上 */
+        }
+
+        /* 不同蘑菇的背景图 - 使用 SVG Data URI */
+        .mushroom.shiitake { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%238B4513"/><path d="M40 50 L45 80 L55 80 L60 50 Z" fill="%23D2B48C"/></svg>'); } /* 香菇 */
+        .mushroom.amanita { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23FF4500"/><circle cx="30" cy="30" r="8" fill="%23ffffff"/><circle cx="70" cy="40" r="10" fill="%23ffffff"/><circle cx="45" cy="70" r="7" fill="%23ffffff"/><rect x="45" y="80" width="10" height="20" fill="%23ffffff"/></svg>'); } /* 毒蝇伞 (红色带白点) */
+        .mushroom.oyster { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 50 C20 20, 80 20, 80 50 L60 80 L40 80 Z" fill="%23D3D3D3"/><rect x="45" y="80" width="10" height="20" fill="%23C0C0C0"/></svg>'); } /* 平菇 (灰色) */
+        .mushroom.ganoderma { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 50 C20 20, 80 20, 80 50 C80 80, 50 100, 20 80 Z" fill="%23A0522D"/><path d="M25 55 C25 30, 75 30, 75 55 C75 75, 50 90, 25 75 Z" fill="%238B4513"/></svg>'); } /* 灵芝 */
+        .mushroom.enoki { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="5" r="5" fill="%23F5F5DC"/><rect x="48" y="5" width="4" height="90" fill="%23D3D3D3"/></svg>'); } /* 金针菇 */
+
+
+        /* 模态框 (Modal) 基础样式 */
+        .modal {
+            display: none; /* 默认隐藏 */
+            position: fixed; /* 固定定位 */
+            z-index: 200; /* 确保在最上层 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* 如果内容过多，允许滚动 */
+            background-color: rgba(0,0,0,0.6); /* 半透明黑色背景 */
+            backdrop-filter: blur(5px); /* 背景模糊效果 */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* 自动居中 */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 切橘子模态框特有样式 */
+        #orange-to-cut {
+            width: 150px;
+            height: 150px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23FFA500"/></svg>'); /* 单个橘子图标 */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 20px auto;
+            cursor: pointer; /* 可以添加点击动画 */
+            transition: transform 0.1s ease-out;
+        }
+
+        #orange-to-cut:active {
+            transform: scale(0.95);
+        }
+
+        .quote {
+            margin-top: 20px;
+            font-style: italic;
+            color: #555;
+            font-size: 1.1em;
+            min-height: 40px; /* 保证高度，防止布局跳动 */
+        }
+
+        /* 蘑菇图鉴样式 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            max-height: 400px; /* 限制高度，可滚动 */
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            background-color: #fafafa;
+        }
+
+        .mushroom-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .mushroom-card img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 5px;
+            opacity: 0.3; /* 未收集的显示为灰色 */
+        }
+
+        .mushroom-card.collected img {
+            opacity: 1; /* 收集到的正常显示 */
+        }
+
+        .mushroom-card p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .mushroom-card.collected p {
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* 蘑菇生成区域，用于定位蘑菇 */
+        #mushroom-spawn-area {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px; /* 蘑菇将在地面上方的这个区域内生成 */
+            pointer-events: none; /* 默认不接受鼠标事件，让点击穿透到下面的泥土 */
+        }
+        /* 当有蘑菇时，需要将 pointer-events 设为 auto，让蘑菇可点击 */
+        #mushroom-spawn-area .mushroom {
+            pointer-events: auto;
+        }
+
+        /* 游戏说明模态框内容样式 */
+        .game-info-content {
+            text-align: left;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        .game-info-content h3 {
+            color: #4CAF50;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .game-info-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+        }
+        .game-info-content li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>小马橘园</h1>
+        <p class="author-info">游戏作者：2702其貌...（bushi）</p>
+
+        <div class="stats-panel">
+            <p>金币: <span id="gold-display">0</span></p>
+            <p>经验: <span id="exp-display">0</span></p>
+            <p>橘子总数: <span id="total-oranges-display">0</span></p>
+        </div>
+
+        <div class="garden">
+            <div id="orange-tree" class="tree stage-0 dry no-fertilizer">
+                <div class="trunk"></div>
+                <div class="leaves"></div>
+                <div class="fruit-layer"></div>
+                <div class="status-icon water-needed">💧</div>
+                <div class="status-icon fertilizer-needed">🌱</div>
+            </div>
+            <div id="mushroom-spawn-area"></div>
+        </div>
+
+        <div class="controls">
+            <button id="water-btn" class="tool-btn">💧 浇水</button>
+            <button id="fertilize-btn" class="tool-btn">🌱 施肥</button>
+            <button id="harvest-btn" class="tool-btn" style="display: none;">🍊 收获</button>
+            <button id="cut-orange-btn" class="tool-btn" style="display: none;">🔪 切橘子</button>
+            <button id="mushroom-collection-btn" class="tool-btn">🍄 蘑菇图鉴</button>
+            <button id="game-info-btn" class="tool-btn">ℹ️ 游戏说明</button> </div>
+
+        <div id="message-area" class="message-area"></div>
+
+        <div id="cut-orange-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>切开橘子</h2>
+                <div id="orange-to-cut"></div>
+                <button id="perform-cut-btn" class="tool-btn">用力切开！</button>
+                <p id="philosophy-quote" class="quote"></p>
+            </div>
+        </div>
+
+        <div id="mushroom-collection-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>我的蘑菇图鉴</h2>
+                <div id="mushroom-gallery" class="gallery">
+                    </div>
+            </div>
+        </div>
+
+        <div id="game-info-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>游戏说明</h2>
+                <div class="game-info-content">
+                    <p>欢迎来到 **小马橘园**！这是一个给小马量身定制的模拟种植橘子的休闲小游戏。</p>
+                    <h3>玩法提示：</h3>
+                    <ul>
+                        <li>**照料橘子树：** 通过点击 **💧 浇水** 和 **🌱 施肥** 按钮来照料您的橘子树，帮助它成长。</li>
+                        <li>**橘子成长：** 橘子树会经历多个生长阶段，最终结出成熟的橘子。</li>
+                        <li>**收获橘子：** 当橘子树结满果实后，点击 **🍊 收获** 按钮即可采摘橘子，获得金币和经验。</li>
+                        <li>**切开橘子：** 收获的橘子会计入您的 **橘子总数**。您可以点击 **🔪 切橘子** 按钮，切开一个橘子，每次都能获得一句橘子的话语！</li>
+                        <li>**蘑菇惊喜：** 勤劳的园丁会发现惊喜！有时候，橘子树下会长出各种 **蘑菇**。点击它们进行采摘。</li>
+                        <li>**蘑菇图鉴：** 您在游戏中收集到的所有蘑菇都可以在 **🍄 蘑菇图鉴** 中查看，看看您能收集到多少稀有品种！</li>
+                    </ul>
+                    <p>所有游戏数据都会实时保存在您的浏览器中，您可以随时关闭页面，下次打开时继续您的橘园生活。</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const orangeTree = document.getElementById('orange-tree');
+        const waterBtn = document.getElementById('water-btn');
+        const fertilizeBtn = document.getElementById('fertilize-btn');
+        const harvestBtn = document.getElementById('harvest-btn');
+        const goldDisplay = document.getElementById('gold-display');
+        const expDisplay = document.getElementById('exp-display');
+        const totalOrangesDisplay = document.getElementById('total-oranges-display');
+        const cutOrangeBtn = document.getElementById('cut-orange-btn');
+        const cutOrangeModal = document.getElementById('cut-orange-modal');
+        const performCutBtn = document.getElementById('perform-cut-btn');
+        const philosophyQuote = document.getElementById('philosophy-quote');
+        const orangeToCut = document.getElementById('orange-to-cut');
+        const mushroomSpawnArea = document.getElementById('mushroom-spawn-area');
+        const mushroomCollectionBtn = document.getElementById('mushroom-collection-btn');
+        const mushroomCollectionModal = document.getElementById('mushroom-collection-modal');
+        const mushroomGallery = document.getElementById('mushroom-gallery');
+        const gameInfoBtn = document.getElementById('game-info-btn'); // 新增游戏说明按钮
+        const gameInfoModal = document.getElementById('game-info-modal'); // 新增游戏说明模态框
+        const messageArea = document.getElementById('message-area');
+
+        const closeButtons = document.querySelectorAll('.close-button'); // 获取所有关闭按钮
+
+        // 游戏状态变量
+        let gameState = {
+            gold: 0,
+            exp: 0,
+            treeStage: 0, // 0:种子, 1:幼苗, 2:小树, 3:中树, 4:大树(结果)
+            waterLevel: 50, // 0-100，低于50需要水
+            fertilizerLevel: 50, // 0-100，低于50需要肥
+            growthProgress: 0, // 当前阶段的成长进度，达到100进入下一阶段
+            lastSaveTime: Date.now(),
+            totalOranges: 0,
+            collectedMushrooms: {}, // 存储已收集的蘑菇种类和数量 { 'shiitake': 1, 'amanita': 0, ... }
+            currentMushroom: null // 当前生成的蘑菇DOM元素
+        };
+
+        const MAX_TREE_STAGE = 4;
+        const GROWTH_NEEDED_PER_STAGE = 100; // 每个阶段需要100点成长值
+        const WATER_DECAY_RATE = 2; // 每秒水份流失
+        const FERTILIZER_DECAY_RATE = 1; // 每秒肥料流失
+        const WATER_GAIN_PER_ACTION = 30;
+        const FERTILIZER_GAIN_PER_ACTION = 30;
+        const GROWTH_GAIN_PER_WATER = 5;
+        const GROWTH_GAIN_PER_FERTILIZER = 10;
+        const HARVEST_GOLD = 50;
+        const HARVEST_EXP = 20;
+
+        // --- 音效文件路径 (请替换为实际的音频文件) ---
+        // 注意：如果不想使用音效，可以注释掉这些行。
+        // 实际游戏中，这些音效文件需要存在于您的项目中。
+        // 由于是单文件，这里无法直接提供音效文件，请自行准备。
+        const sounds = {
+            water: new Audio(''), // 示例路径，替换为实际的mp3文件
+            fertilizer: new Audio(''),
+            grow: new Audio(''),
+            harvest: new Audio(''),
+            error: new Audio(''),
+            cut: new Audio(''),
+            mushroomPick: new Audio(''),
+            modalOpen: new Audio(''),
+            modalClose: new Audio('')
+        };
+
+        // 哲理语录列表
+        const philosophyQuotes = [
+            "爱不是凝视对方，而是两人一起凝视远方。",
+            "生命不息，奋斗不止。",
+            "真正的幸福在于对所拥有的一切心怀感激。",
+            "你的时间有限，不要浪费在重复别人的生活上。",
+            "重要的不是你所看，而是你所见。",
+            "爱是理解的开始。",
+            "每一个不曾起舞的日子，都是对生命的辜负。",
+            "耐心和时间，可以把桑叶变成丝绸。",
+            "最大的冒险，就是什么都不做。",
+            "生活就像骑自行车，为了保持平衡，你必须不断前进。",
+            "我们不能选择生命的长度，但可以选择生命的宽度。"
+        ];
+
+        // 蘑菇种类定义 (包含 SVG data URI)
+        const mushroomTypes = [
+            { name: '香菇', id: 'shiitake', rarity: 0.5, description: '一种常见的食用菌，味道鲜美。', svg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%238B4513"/><path d="M40 50 L45 80 L55 80 L60 50 Z" fill="%23D2B48C"/></svg>' },
+            { name: '毒蝇伞', id: 'amanita', rarity: 0.05, description: '虽然外观鲜艳，但有剧毒，请勿食用！', svg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23FF4500"/><circle cx="30" cy="30" r="8" fill="%23ffffff"/><circle cx="70" cy="40" r="10" fill="%23ffffff"/><circle cx="45" cy="70" r="7" fill="%23ffffff"/><rect x="45" y="80" width="10" height="20" fill="%23ffffff"/></svg>' },
+            { name: '平菇', id: 'oyster', rarity: 0.4, description: '口感滑嫩，营养丰富的菌类。', svg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 50 C20 20, 80 20, 80 50 L60 80 L40 80 Z" fill="%23D3D3D3"/><rect x="45" y="80" width="10" height="20" fill="%23C0C0C0"/></svg>' },
+            { name: '灵芝', id: 'ganoderma', rarity: 0.02, description: '传说中的仙草，具有药用价值。', svg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 50 C20 20, 80 20, 80 50 C80 80, 50 100, 20 80 Z" fill="%23A0522D"/><path d="M25 55 C25 30, 75 30, 75 55 C75 75, 50 90, 25 75 Z" fill="%238B4513"/></svg>' },
+            { name: '金针菇', id: 'enoki', rarity: 0.3, description: '细长洁白，火锅的常客。', svg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="5" r="5" fill="%23F5F5DC"/><rect x="48" y="5" width="4" height="90" fill="%23D3D3D3"/></svg>' }
+        ];
+
+        // 确保所有蘑菇都有一个初始的 collectedMushrooms 状态
+        mushroomTypes.forEach(m => {
+            if (gameState.collectedMushrooms[m.id] === undefined) {
+                gameState.collectedMushrooms[m.id] = 0;
+            }
+        });
+
+        // --- 数据保存与加载 ---
+        function saveGame() {
+            localStorage.setItem('orangeTreeGame', JSON.stringify(gameState));
+            gameState.lastSaveTime = Date.now();
+            console.log('游戏已保存！', gameState);
+        }
+
+        function loadGame() {
+            const savedData = localStorage.getItem('orangeTreeGame');
+            if (savedData) {
+                // 合并加载的数据，确保新版本的数据结构兼容
+                const loadedState = JSON.parse(savedData);
+                gameState = { ...gameState, ...loadedState }; // 合并现有和加载的状态
+
+                // 根据上次保存时间模拟流失
+                const timeElapsed = (Date.now() - gameState.lastSaveTime) / 1000; // 秒
+                gameState.waterLevel = Math.max(0, gameState.waterLevel - timeElapsed * WATER_DECAY_RATE);
+                gameState.fertilizerLevel = Math.max(0, gameState.fertilizerLevel - timeElapsed * FERTILIZER_DECAY_RATE);
+
+                // 确保新加入的 collectedMushrooms 键存在且有默认值
+                mushroomTypes.forEach(m => {
+                    if (gameState.collectedMushrooms[m.id] === undefined) {
+                        gameState.collectedMushrooms[m.id] = 0;
+                    }
+                });
+
+                updateGameDisplay();
+                showMessage('游戏已加载！', 'info');
+            } else {
+                console.log('未找到保存数据，开始新游戏。');
+                showMessage('欢迎来到小马橘园！', 'info');
+            }
+        }
+
+        // --- 游戏显示更新 ---
+        function updateGameDisplay() {
+            // 更新金币、经验和橘子总数显示
+            goldDisplay.textContent = gameState.gold;
+            expDisplay.textContent = gameState.exp;
+            totalOrangesDisplay.textContent = gameState.totalOranges;
+
+            // 更新橘子树的CSS类以反映其生长阶段和健康状态
+            orangeTree.className = `tree stage-${gameState.treeStage}`;
+
+            if (gameState.waterLevel < 50) {
+                orangeTree.classList.add('dry');
+            } else {
+                orangeTree.classList.remove('dry');
+            }
+
+            if (gameState.fertilizerLevel < 50) {
+                orangeTree.classList.add('no-fertilizer');
+            } else {
+                orangeTree.classList.remove('no-fertilizer');
+            }
+
+            // 显示或隐藏收获按钮
+            if (gameState.treeStage === MAX_TREE_STAGE && gameState.growthProgress >= GROWTH_NEEDED_PER_STAGE) {
+                harvestBtn.style.display = 'inline-block';
+                orangeTree.classList.add('ready-to-harvest');
+            } else {
+                harvestBtn.style.display = 'none';
+                orangeTree.classList.remove('ready-to-harvest');
+            }
+
+            // 显示或隐藏切橘子按钮
+            if (gameState.totalOranges > 0) {
+                cutOrangeBtn.style.display = 'inline-block';
+            } else {
+                cutOrangeBtn.style.display = 'none';
+            }
+        }
+
+        // --- 游戏逻辑 ---
+
+        function showMessage(msg, type = 'error', duration = 3000) {
+            messageArea.textContent = msg;
+            messageArea.className = `message-area ${type}`; // 添加类型类，例如 'error', 'info', 'success'
+            messageArea.style.opacity = 1; // 确保可见
+            messageArea.style.animation = 'none'; // 重置动画
+            void messageArea.offsetWidth; // 触发回流以重置动画
+            messageArea.style.animation = `fadeOut ${duration / 1000}s forwards`;
+        }
+
+        function playSound(soundName) {
+            if (sounds[soundName] && sounds[soundName].src) { // 检查是否有音源
+                sounds[soundName].currentTime = 0; // 从头播放
+                sounds[soundName].play().catch(e => console.warn("播放音效失败:", e)); // 使用warn避免频繁报错
+            }
+        }
+
+        // 互动特效：粒子效果
+        function createParticleEffect(x, y, type) {
+            const numParticles = type === 'water' ? 10 : 15;
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('effect-particle');
+                if (type === 'fertilizer') {
+                    particle.classList.add('fertilizer');
+                }
+                // 随机初始位置稍微偏离点击点
+                particle.style.left = `${x + (Math.random() - 0.5) * 20}px`;
+                particle.style.top = `${y + (Math.random() - 0.5) * 20}px`;
+                // 随机大小
+                const size = Math.random() * 8 + 4; // 4px to 12px
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+
+                // 设置CSS变量用于随机偏移
+                particle.style.setProperty('--rand-x', (Math.random() - 0.5) * 100);
+
+                document.body.appendChild(particle);
+
+                // 动画结束后移除粒子
+                particle.addEventListener('animationend', () => {
+                    particle.remove();
+                });
+            }
+        }
+
+        function waterTree(event) {
+            if (gameState.waterLevel >= 100) {
+                showMessage('橘子树现在不渴！');
+                playSound('error');
+                return;
+            }
+
+            gameState.waterLevel = Math.min(100, gameState.waterLevel + WATER_GAIN_PER_ACTION);
+            gameState.growthProgress += GROWTH_GAIN_PER_WATER;
+            showMessage('你给橘子树浇了水。', 'info');
+            playSound('water');
+
+            // 粒子特效
+            const rect = orangeTree.getBoundingClientRect();
+            const treeCenterX = rect.left + rect.width / 2;
+            const treeBottomY = rect.bottom;
+            createParticleEffect(treeCenterX, treeBottomY, 'water');
+
+            checkGrowth();
+            updateGameDisplay();
+            saveGame();
+        }
+
+        function fertilizeTree(event) {
+            if (gameState.fertilizerLevel >= 100) {
+                showMessage('橘子树现在不缺肥！');
+                playSound('error');
+                return;
+            }
+
+            gameState.fertilizerLevel = Math.min(100, gameState.fertilizerLevel + FERTILIZER_GAIN_PER_ACTION);
+            gameState.growthProgress += GROWTH_GAIN_PER_FERTILIZER;
+            showMessage('你给橘子树施了肥。', 'info');
+            playSound('fertilizer');
+
+            // 粒子特效
+            const rect = orangeTree.getBoundingClientRect();
+            const treeCenterX = rect.left + rect.width / 2;
+            const treeBottomY = rect.bottom;
+            createParticleEffect(treeCenterX, treeBottomY, 'fertilizer');
+
+            checkGrowth();
+            updateGameDisplay();
+            saveGame();
+        }
+
+        function checkGrowth() {
+            if (gameState.treeStage < MAX_TREE_STAGE && gameState.growthProgress >= GROWTH_NEEDED_PER_STAGE) {
+                gameState.treeStage++;
+                gameState.growthProgress = 0; // 重置成长进度
+                showMessage(`橘子树长大了！现在是第 ${gameState.treeStage} 阶段！`, 'success');
+                playSound('grow');
+                // 添加一个短暂的生长动画类
+                orangeTree.classList.add('growing');
+                setTimeout(() => {
+                    orangeTree.classList.remove('growing');
+                }, 800);
+            }
+        }
+
+        function harvestOrange() {
+            if (gameState.treeStage === MAX_TREE_STAGE && gameState.growthProgress >= GROWTH_NEEDED_PER_STAGE) {
+                gameState.gold += HARVEST_GOLD;
+                gameState.exp += HARVEST_EXP;
+                gameState.totalOranges++; // 橘子总数增加
+                gameState.treeStage = 0; // 收获后回到种子阶段
+                gameState.growthProgress = 0;
+                gameState.waterLevel = 50; // 重置状态
+                gameState.fertilizerLevel = 50; // 重置状态
+                showMessage(`恭喜！你收获了橘子，获得 ${HARVEST_GOLD} 金币和 ${HARVEST_EXP} 经验！`, 'success');
+                playSound('harvest');
+
+                // 橘子掉落动画（这里简化为瞬间消失并出现新树）
+                orangeTree.classList.add('harvesting'); // 添加一个 CSS 类来做收获动画
+                setTimeout(() => {
+                    orangeTree.classList.remove('harvesting');
+                    updateGameDisplay();
+                    saveGame();
+                }, 500); // 动画持续时间
+            } else {
+                showMessage('橘子还没有成熟，不能收获！');
+                playSound('error');
+            }
+        }
+
+        // 切橘子功能
+        function openCutOrangeModal() {
+            if (gameState.totalOranges > 0) {
+                cutOrangeModal.style.display = 'flex'; // 显示模态框
+                philosophyQuote.textContent = ''; // 清空之前的语录
+                playSound('modalOpen');
+            } else {
+                showMessage('你还没有橘子可以切！', 'error');
+            }
+        }
+
+        function performCutOrange() {
+            if (gameState.totalOranges > 0) {
+                gameState.totalOranges--; // 消耗一个橘子
+                const randomIndex = Math.floor(Math.random() * philosophyQuotes.length);
+                philosophyQuote.textContent = philosophyQuotes[randomIndex];
+                playSound('cut');
+
+                // 切开橘子的动画
+                orangeToCut.classList.add('cutting');
+                setTimeout(() => {
+                    orangeToCut.classList.remove('cutting');
+                    updateGameDisplay(); // 更新橘子总数显示
+                    saveGame();
+                }, 300); // 模拟切开的短暂动画
+            } else {
+                showMessage('没有橘子可以切了！', 'error');
+                philosophyQuote.textContent = '没有橘子可以切了...';
+                playSound('error');
+            }
+        }
+
+        // 蘑菇生成
+        function spawnMushroom() {
+            // 每次只能有一个蘑菇在场
+            if (mushroomSpawnArea.children.length > 0) { // 检查是否有蘑菇DOM元素
+                return;
+            }
+
+            // 随机决定是否生成蘑菇 (例如 15% 概率每次循环)
+            if (Math.random() < 0.15) {
+                const availableMushrooms = mushroomTypes.filter(m => m.id !== 'amanita' || gameState.collectedMushrooms['amanita'] === 0); // 毒蝇伞只出现一次
+                if (availableMushrooms.length === 0) return; // 如果没有可生成的蘑菇，则返回
+
+                const randomMushroomType = availableMushrooms[Math.floor(Math.random() * availableMushrooms.length)];
+
+                const mushroomElement = document.createElement('div');
+                mushroomElement.classList.add('mushroom', randomMushroomType.id);
+                // 使用 SVG 数据作为背景图
+                mushroomElement.style.backgroundImage = `url('${randomMushroomType.svg}')`;
+
+                // 随机位置
+                const gardenWidth = mushroomSpawnArea.offsetWidth;
+                const leftPos = Math.random() * (gardenWidth - 60) + 10; // 留出边距
+                mushroomElement.style.left = `${leftPos}px`;
+                mushroomElement.dataset.mushroomId = randomMushroomType.id; // 保存蘑菇ID
+
+                mushroomElement.addEventListener('click', () => pickMushroom(mushroomElement, randomMushroomType));
+                mushroomSpawnArea.appendChild(mushroomElement);
+                showMessage(`橘子树下长出了一颗 ${randomMushroomType.name}！快点击它采摘吧！`, 'info');
+                saveGame();
+            }
+        }
+
+        // 采摘蘑菇
+        function pickMushroom(mushroomElement, mushroomType) {
+            playSound('mushroomPick');
+            mushroomElement.remove(); // 从DOM中移除蘑菇
+
+            gameState.collectedMushrooms[mushroomType.id]++; // 增加收集数量
+            gameState.exp += 10; // 采摘蘑菇获得经验
+            showMessage(`你采摘了一颗 ${mushroomType.name}！经验 +10。`, 'success');
+            updateGameDisplay();
+            saveGame();
+        }
+
+        // 打开蘑菇收集库
+        function openMushroomCollectionModal() {
+            mushroomCollectionModal.style.display = 'flex';
+            playSound('modalOpen');
+            renderMushroomGallery();
+        }
+
+        // 渲染蘑菇图鉴
+        function renderMushroomGallery() {
+            mushroomGallery.innerHTML = ''; // 清空现有内容
+
+            mushroomTypes.forEach(mushroom => {
+                const card = document.createElement('div');
+                card.classList.add('mushroom-card');
+
+                const isCollected = gameState.collectedMushrooms[mushroom.id] > 0;
+                if (isCollected) {
+                    card.classList.add('collected');
+                }
+
+                const img = document.createElement('img');
+                img.src = mushroom.svg; // 使用蘑菇类型中定义的 SVG 数据
+                img.alt = mushroom.name;
+
+                const nameP = document.createElement('p');
+                nameP.textContent = isCollected ? mushroom.name : '???';
+                nameP.title = isCollected ? mushroom.description : '未发现的蘑菇'; // 鼠标悬停显示描述
+
+                const countP = document.createElement('p');
+                countP.textContent = isCollected ? `数量: ${gameState.collectedMushrooms[mushroom.id]}` : '未收集';
+
+                card.appendChild(img);
+                card.appendChild(nameP);
+                card.appendChild(countP);
+                mushroomGallery.appendChild(card);
+            });
+        }
+
+        // 打开游戏说明模态框
+        function openGameInfoModal() {
+            gameInfoModal.style.display = 'flex';
+            playSound('modalOpen');
+        }
+
+        // 关闭模态框通用函数
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.closest('.modal').style.display = 'none';
+                playSound('modalClose');
+            });
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === cutOrangeModal) {
+                cutOrangeModal.style.display = 'none';
+                playSound('modalClose');
+            }
+            if (event.target === mushroomCollectionModal) {
+                mushroomCollectionModal.style.display = 'none';
+                playSound('modalClose');
+            }
+            if (event.target === gameInfoModal) {
+                gameInfoModal.style.display = 'none';
+                playSound('modalClose');
+            }
+        });
+
+
+        // --- 事件监听 ---
+        waterBtn.addEventListener('click', waterTree);
+        fertilizeBtn.addEventListener('click', fertilizeTree);
+        harvestBtn.addEventListener('click', harvestOrange);
+        cutOrangeBtn.addEventListener('click', openCutOrangeModal);
+        performCutBtn.addEventListener('click', performCutOrange);
+        mushroomCollectionBtn.addEventListener('click', openMushroomCollectionModal);
+        gameInfoBtn.addEventListener('click', openGameInfoModal); // 游戏说明按钮事件监听
+
+
+        // --- 游戏循环 (模拟时间流逝和状态衰减) ---
+        function gameLoop() {
+            // 模拟水份和肥料流失
+            gameState.waterLevel = Math.max(0, gameState.waterLevel - WATER_DECAY_RATE / 2); // 每秒衰减
+            gameState.fertilizerLevel = Math.max(0, gameState.fertilizerLevel - FERTILIZER_DECAY_RATE / 2);
+
+            // 随机尝试生成蘑菇
+            spawnMushroom();
+
+            updateGameDisplay();
+        }
+
+        // 每500毫秒（0.5秒）运行一次游戏循环
+        setInterval(gameLoop, 500);
+
+        // 每10秒自动保存一次 (除了每次操作后保存)
+        setInterval(saveGame, 10000);
+
+        // --- 初始化游戏 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGame();
+            updateGameDisplay(); // 初始加载后更新一次显示
+        });
+
+        // 在页面关闭或刷新前保存数据
+        window.addEventListener('beforeunload', saveGame);
+    </script>
+</body>
+</html>
