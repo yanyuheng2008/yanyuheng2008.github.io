@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <title>小马橘园</title> <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <title>小马橘园 - 2702其貌...</title> <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -511,7 +511,7 @@
 <body>
     <div class="game-container">
         <h1>小马橘园</h1>
-        <p class="author-info"></p>
+        <p class="author-info">游戏作者：2702其貌...（bushi）</p>
 
         <div class="stats-panel">
             <p>金币: <span id="gold-display">0</span></p>
@@ -646,7 +646,7 @@
             modalClose: new Audio('')
         };
 
-        // 哲理语录列表
+        // 橘子语录列表
         const philosophyQuotes = [
             "爱不是凝视对方，而是两人一起凝视远方。",
             "生命不息，奋斗不止。",
@@ -661,7 +661,7 @@
             "我们不能选择生命的长度，但可以选择生命的宽度。"
         ];
 
-        // 蘑菇种类定义 (包含 SVG data URI)
+        // 麻薯种类，暂时先不做黄蘑菇
         const mushroomTypes = [
             { name: '香菇', id: 'shiitake', rarity: 0.5, description: '一种常见的食用菌，味道鲜美。', svg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%238B4513"/><path d="M40 50 L45 80 L55 80 L60 50 Z" fill="%23D2B48C"/></svg>' },
             { name: '毒蝇伞', id: 'amanita', rarity: 0.05, description: '虽然外观鲜艳，但有剧毒，请勿食用！', svg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23FF4500"/><circle cx="30" cy="30" r="8" fill="%23ffffff"/><circle cx="70" cy="40" r="10" fill="%23ffffff"/><circle cx="45" cy="70" r="7" fill="%23ffffff"/><rect x="45" y="80" width="10" height="20" fill="%23ffffff"/></svg>' },
